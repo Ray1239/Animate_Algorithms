@@ -1,0 +1,28 @@
+body{
+  background-color: black;
+}
+
+.mainCont{
+  position: fixed;
+  left: 50%;
+  transform: translate(-50%);
+  top: 150px;
+  width: 75%;
+  height: 50%;
+  background-color: gray;
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  grid-template-rows: auto auto;
+  padding: 15px;
+}
+
+.mazeSpace{
+  grid-column: span 1;
+  grid-row: span 2;
+
+}
+
+.codingSpace{
+  grid-column: span 1;
+  grid-row: span 2;
+}
