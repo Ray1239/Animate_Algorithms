@@ -14,7 +14,7 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, 'animate_algorithm/build')));
+app.use(express.static(path.join(__dirname, 'animate_algorithm/src')));
 
 
 // API route example
@@ -25,7 +25,7 @@ app.get('/api/hello', (req, res) => {
 
 // All other requests return the React app
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'animate_algorithm/build', 'index.html'));
+  res.sendFile(path.join(__dirname, 'animate_algorithm/src', 'index.html'));
 });
 
 app.listen(port, () => {
