@@ -1,5 +1,8 @@
 body{
   background-color: black;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
 }
 
 .mainCont{
@@ -11,9 +14,10 @@ body{
   height: 50%;
   background-color: gray;
   display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  grid-template-rows: auto auto;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto auto auto;
   padding: 15px;
+  overflow-x: auto;
 }
 
 .mazeSpace{

@@ -3,7 +3,9 @@ import './Footer.css';
 
 const Footer = () => {
     return(
-        <div className="footer">© This content has copyright.</div>
+        <div className="footer">
+            <p>© This content is subject to copyright.</p>
+        </div>
     )
 };
 
