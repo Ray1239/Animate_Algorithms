@@ -3,6 +3,8 @@ import React, { useState, useRef, useEffect } from 'react';
 
 const DrawMaze = () => {
   const canvasRef = useRef(null);
+  const clearBtnRef = useRef(null);
+
   const [lineType, setLineType] = useState('horizontal');
   const [lineWidth, setLineWidth] = useState(2);
   const [lineHeight, setLineHeight] = useState(50);
@@ -10,12 +12,11 @@ const DrawMaze = () => {
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
+    const clearBtn = clearBtnRef.current;
 
     const drawLine = (event) => {
       const x = event.clientX - canvas.getBoundingClientRect().left;
       const y = event.clientY - canvas.getBoundingClientRect().top;
-
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.lineWidth = lineWidth;
 
       if (lineType === 'horizontal') {
@@ -31,10 +32,16 @@ const DrawMaze = () => {
       }
     };
 
+    const clearCanvas = (event) => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
     canvas.addEventListener('click', drawLine);
+    clearBtn.addEventListener('click', clearCanvas);
 
     return () => {
       canvas.removeEventListener('click', drawLine);
+      clearBtn.removeEventListener('click', clearCanvas)
     };
   }, [lineType, lineWidth, lineHeight]);
 
@@ -61,6 +68,7 @@ const DrawMaze = () => {
         Line Height:
         <input type="number" value={lineHeight} onChange={(e) => setLineHeight(e.target.valueAsNumber)} min="1" />
       </label>
+      <button ref={clearBtnRef} className='btn btn-sm bg-light mb-1' >Clear Canvas</button>
       <br />
 
       <canvas ref={canvasRef} width="600" height="360" id='drawCanvas'></canvas>
