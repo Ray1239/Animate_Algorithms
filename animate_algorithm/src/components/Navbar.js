@@ -49,7 +49,7 @@ export default function Navbar(props){
                         <Link className="nav-link" to="/About">{props.text1}</Link>
                     </li>
                     <li className="nav-item">
-                        <Link className="nav-link" to="/Create Maze">Create Maze</Link>
+                        <Link className="nav-link" to="/Draw-Maze">Create Maze</Link>
                     </li>
                 </ul>
             </div>

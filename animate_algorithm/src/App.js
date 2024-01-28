@@ -4,6 +4,7 @@ import './App.css';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Game from './components/Game';
+import DrawMaze from './components/DrawMaze';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 // import { Canvas, useFrame } from '@react-three/fiber';
@@ -46,14 +47,6 @@ const About = () => (
   <>
     <div className="about">
       <h1>This is about page</h1>
-    </div>
-  </>
-)
-
-const Contact = () => (
-  <>
-    <div className="contact">
-      <h1>This is contact page</h1>
     </div>
   </>
 )
@@ -102,7 +95,7 @@ function App() {
         <Routes>
             <Route path="/" element={<Home/>} />
             <Route path = '/About' element = {<About/>} />
-            <Route path='/contact' element={<Contact/>} />
+            <Route path='/Draw-Maze' element={<DrawMaze/>} />
         </Routes>
       </div>
       <Footer style = {navStyle}/>

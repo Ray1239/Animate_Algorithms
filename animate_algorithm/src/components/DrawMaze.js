@@ -1,3 +1,4 @@
+import './DrawMaze.css';
 import React, { useState, useRef, useEffect } from 'react';
 
 const DrawMaze = () => {
@@ -60,10 +61,9 @@ const DrawMaze = () => {
         Line Height:
         <input type="number" value={lineHeight} onChange={(e) => setLineHeight(e.target.valueAsNumber)} min="1" />
       </label>
-
       <br />
 
-      <canvas ref={canvasRef} width="500" height="500"></canvas>
+      <canvas ref={canvasRef} width="600" height="360" id='drawCanvas'></canvas>
     </div>
   );
 };
