@@ -4,7 +4,8 @@ import './App.css';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Game from './components/Game';
-// import React, { useRef, useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 // import { Canvas, useFrame } from '@react-three/fiber';
 
 // function Box(props) {
@@ -30,20 +31,82 @@ import Game from './components/Game';
 //   )
 // }
 
-function App() {
-  return (
-    <div>
-      <Navbar title="Maze Solving Game" />
-      <div className="mainCont">
-        <div className="mazeSpace">
-          <Game/>
-        </div>
-        <div className="codingSpace">
-          <h1>This is code space</h1>
-        </div>
-      </div>
-      <Footer/>
+const Home = () => (
+  <>
+    <div className="mazeSpace">
+      <Game/>
     </div>
+    <div className="codingSpace">
+      <h1>This is code space</h1>
+    </div>
+  </>
+);
+
+const About = () => (
+  <>
+    <div className="about">
+      <h1>This is about page</h1>
+    </div>
+  </>
+)
+
+const Contact = () => (
+  <>
+    <div className="contact">
+      <h1>This is contact page</h1>
+    </div>
+  </>
+)
+
+function App() {
+  const [mode, setMode] = useState("Dark Mode");
+  const [navStyle, setStyle] = useState({color : "white", backgroundColor : "black"}); /*for navbar*/
+  const [bodyStyle, setBodyStyle] = useState({color : "black", backgroundColor : "white"}); /*for main body*/
+
+  /*To switch theme when toggle button is clicked*/
+  const switchtheme = () => {
+    if (mode === "Dark Mode"){
+        console.log(mode);
+        setMode("Light Mode");
+        setStyle({
+            color: "white",
+            backgroundColor: "#00008B"
+        });
+        setBodyStyle({
+            color : "white",
+            backgroundColor : "black"
+        });
+    }else{
+        console.log(mode);
+        setMode("Dark Mode");
+        setStyle({
+            backgroundColor : "black",
+            color : "white" 
+        });
+        setBodyStyle({
+          color : "black",
+          backgroundColor : "white"
+        });
+    }
+  };
+
+  useEffect(() => {
+    document.body.style.backgroundColor = bodyStyle.backgroundColor;
+    document.body.style.color = bodyStyle.color;
+  }, [bodyStyle]);
+
+  return (
+    <Router >
+      <Navbar title="Maze Solving Game" text1 = "About" modec = {mode === 'Dark Mode'? 'Light Mode': 'Dark Mode'} switchfunc = {switchtheme} style = {navStyle} />
+      <div className="mainCont">
+        <Routes>
+            <Route path="/" element={<Home/>} />
+            <Route path = '/About' element = {<About/>} />
+            <Route path='/contact' element={<Contact/>} />
+        </Routes>
+      </div>
+      <Footer style = {navStyle}/>
+    </Router>
   );
 }
 

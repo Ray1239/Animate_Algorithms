@@ -34,34 +34,61 @@ const Game = () => {
     function preload() {
       // Load game assets here
         this.load.image('background', process.env.PUBLIC_URL + '/Land.webp');
-        this.load.image('maze', process.env.PUBLIC_URL + '/maze.png');
+        // this.load.image('maze', process.env.PUBLIC_URL + '/maze.png');
         // this.load.image('dude', process.env.PUBLIC_URL + '/assets/dude.png');
-        this.load.spritesheet('dude', 
-            process.env.PUBLIC_URL + 'assets/dude.png',
-            { frameWidth: 32, frameHeight: 48 }
-        );
+        // this.load.spritesheet('dude', 
+        //     process.env.PUBLIC_URL + 'assets/dude.png',
+        //     { frameWidth: 32, frameHeight: 48 }
+        // );
         this.load.image('mouse', process.env.PUBLIC_URL + '/mouse.png');
     }
 
     var maze;
     var mouse;
     // Create game elements
+// Create game elements
     function create() {
         // Create game elements here
         const parentWidth = this.game.config.width;
         const parentHeight = this.game.config.height;
 
         this.add.image(desiredWidth / 2, desiredHeight / 2, 'background');
+        
+        // Create maze group
         maze = this.physics.add.staticGroup();
-        const mazeSprite = maze.create(parentWidth / 2, parentHeight / 2, 'maze');
-        mazeSprite.setSize(desiredWidth, desiredHeight);
-        mazeSprite.setOrigin(0.5, 0.5);
-        this.physics.world.enable(maze);
+
+        // Create maze structure
+        const walls = [
+            // Walls defining the outer boundary
+            { x: 0, y: 0, width: parentWidth, height: 2 },
+            { x: 0, y: parentHeight, width: parentWidth, height: 2 },
+            { x: 0, y: 0, width: 2, height: parentHeight },
+            { x: parentWidth, y: 0, width: 2, height: parentHeight },
+
+            // Inner walls
+            { x: parentWidth / 4, y: parentHeight / 4, width: parentWidth / 2, height: 2 },
+            { x: parentWidth / 4, y: parentHeight / 2, width: 2, height: parentHeight / 2 },
+            { x: parentWidth / 2, y: parentHeight / 2, width: 2, height: parentHeight / 2 },
+            { x: parentWidth * 3 / 4, y: parentHeight / 4, width: parentWidth / 2, height: 2 },
+            { x: parentWidth * 3 / 4, y: parentHeight / 2, width: 2, height: parentHeight / 2 },
+            { x: parentWidth / 4, y: parentHeight * 3 / 4, width: parentWidth / 2, height: 2 },
+            { x: parentWidth / 2, y: parentHeight * 3 / 4, width: 2, height: parentHeight / 4 },
+
+            // Additional walls for more complexity and solvability
+            { x: parentWidth / 4, y: parentHeight * 1 / 4, width: 2, height: parentHeight / 4 },
+            { x: parentWidth * 3 / 4, y: parentHeight * 3 / 4, width: 2, height: parentHeight / 4 },
+            { x: parentWidth / 2, y: parentHeight / 4, width: 2, height: parentHeight / 4 },
+        ];
+
+        walls.forEach(wall => {
+            const wallRect = this.add.rectangle(wall.x, wall.y, wall.width, wall.height, 0xffffff);
+            maze.add(wallRect);
+        });
 
         // mouse
-        mouse = this.physics.add.sprite(100, 450, 'mouse');
+        mouse = this.physics.add.sprite(30, 32, 'mouse');
         mouse.setCollideWorldBounds(true);
-
+        mouse.setSize(16, 16); 
         mouse.setFrame(0);
         // this.anims.create({
         //     key: 'left',
@@ -69,7 +96,7 @@ const Game = () => {
         //     frameRate: 10,
         //     repeat: -1
         // });
-
+    
         // this.anims.create({
         //     key: 'turn',
         //     frames: [ { key: 'mouse', frame: 4 } ],
@@ -86,6 +113,7 @@ const Game = () => {
         this.physics.add.collider(mouse, maze);
     }
 
+    
     // Update game logic (if needed)
     function update() {
         // Update logic here

@@ -1,14 +1,11 @@
 .footer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
+    text-align: center;
     height: 20px; /* Adjust the height as needed */
-    background-color: rgb(27, 27, 27);
-    color: white;
-    z-index: 1000; /* Adjust the z-index if needed */
+    /* background-color: rgb(27, 27, 27);
+    color: white; */
+    position: fixed;
+    left: 0px;
+    bottom: 0px;
+    width:100dvw;
 }
   
