@@ -1,0 +1,798 @@
+import './DrawMaze.css';
+import React, { useState, useRef, useEffect } from 'react';
+// import p5 from 'p5';
+
+ const DrawMaze = () => {
+    const canvasRef = useRef(null);
+    const clearBtnRef = useRef(null);
+
+    const [lineType, setLineType] = useState('horizontal');
+    const [lineWidth, setLineWidth] = useState(2);
+    const [lineHeight, setLineHeight] = useState(50);
+
+
+    useEffect(() => {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      const clearBtn = clearBtnRef.current;
+
+      const drawLine = (event) => {
+        const x = event.clientX - canvas.getBoundingClientRect().left;
+        const y = event.clientY - canvas.getBoundingClientRect().top;
+        ctx.lineWidth = lineWidth;
+
+        if (lineType === 'horizontal') {
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(x + lineHeight, y);
+          ctx.stroke();
+        } else if (lineType === 'vertical') {
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(x, y + lineHeight);
+          ctx.stroke();
+        }
+      };
+
+      const clearCanvas = (event) => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+
+      canvas.addEventListener('click', drawLine);
+      clearBtn.addEventListener('click', clearCanvas);
+
+      return () => {
+        canvas.removeEventListener('click', drawLine);
+        clearBtn.removeEventListener('click', clearCanvas)
+      };
+    }, [lineType, lineWidth, lineHeight]);
+
+   return (
+    <div>
+      <label>
+        Select line type:
+        <select value={lineType} onChange={(e) => setLineType(e.target.value)}>
+          <option value="horizontal">Horizontal</option>
+          <option value="vertical">Vertical</option>
+        </select>
+      </label>
+
+    <br />
+
+      <label>
+        Line Width:
+        <input type="number" value={lineWidth} onChange={(e) => setLineWidth(e.target.valueAsNumber)} min="1" />
+      </label>
+
+      <br />
+
+      <label>
+        Line Height:
+        <input type="number" value={lineHeight} onChange={(e) => setLineHeight(e.target.valueAsNumber)} min="1" />
+      </label>
+      <button ref={clearBtnRef} className='btn btn-sm bg-light mb-1' style={{ color: 'black' }} >Clear Canvas</button>
+      <br />
+
+      <canvas ref={canvasRef} width="600" height="360" id='drawCanvas'></canvas>
+    </div>
+   );
+};
+
+export default DrawMaze;
+
+import './DrawMaze.css';
+import React, { useState, useRef, useEffect } from 'react';
+import p5 from 'p5';
+
+const DrawMaze = () => {
+  const clearBtnRef = useRef(null);
+  const canvasCreatedRef = useRef(false);
+  const myp5Ref = useRef(null);
+
+  const [lineType, setLineType] = useState('horizontal');
+  const [lineWidth, setLineWidth] = useState(2);
+  const [lineHeight, setLineHeight] = useState(50);
+  const [runCount, setRunCount] = useState(0);
+
+  useEffect(() => {
+    // Create a new p5 instance and store it in a ref
+    const clearBtn = clearBtnRef.current;
+    const sketch = (p) => {
+      p.setup = () => {
+        // Create canvas inside the existing div with id 'drawCanvas'
+        if(runCount === 0 && !canvasCreatedRef.current){
+          const canvas = p.createCanvas(570, 360);
+          canvas.parent('drawCanvas');
+          setRunCount((prevRunCount) => prevRunCount + 1 );
+          canvasCreatedRef.current = true;
+        } else {
+          console.log(runCount);
+        }
+      };
+      var drawing = false;
+      var vertical;
+      var count = 0;
+      var px, py, nx, ny;
+
+      p.mousePressed = () => {
+        vertical = (lineType === 'vertical')? true: false;
+        if (count === 0) {
+          px = p.mouseX;
+          py = p.mouseY;
+          drawing = false;
+        } else if (count === 1) {
+          nx = p.mouseX;
+          ny = p.mouseY;
+          drawing = true;
+        } else {
+          px = p.mouseX;
+          py = p.mouseY;
+          drawing = false;
+        }
+        count = (count + 1) % 3;
+        console.log(count);
+      }
+
+      p.draw = () => {
+        if (drawing && vertical) {
+          // Continue drawing horizontally
+          p.line(px, py, nx, py);
+        } else if (drawing && !vertical) {
+          // Continue drawing vertically
+          p.line(px, py, px, ny);
+        }
+      };
+
+      function clearFunc(event){
+        p.clear(1,0,0);
+      }
+
+      clearBtn.addEventListener('click', clearFunc);
+
+      return () => {
+        clearBtn.removeEventListener('click', clearFunc);
+      }
+    };
+
+    if(runCount === 0){
+      myp5Ref.current = new p5(sketch);
+    }
+
+    // Clean up the p5 instance when the component unmounts
+    return () => {
+      if(runCount === 0){
+        console.log(runCount);
+      } else {
+        myp5Ref.current.remove();
+      }
+    };
+  }, [lineType, runCount]);
+
+  return(
+  <div>
+       <label>
+         Select line type:
+         <select value={lineType} onChange={(e) => setLineType(e.target.value)}>
+           <option value="horizontal">Horizontal</option>
+           <option value="vertical">Vertical</option>
+         </select>
+       </label>
+       <br />
+       <label>
+         Line Width:
+         <input type="number" value={lineWidth} onChange={(e) => setLineWidth(e.target.valueAsNumber)} min="1" />
+       </label>
+       <br />
+       <label>
+         Line Height:
+         <input type="number" value={lineHeight} onChange={(e) => setLineHeight(e.target.valueAsNumber)} min="1" />
+       </label>
+       <button ref={clearBtnRef} className='btn btn-sm bg-light mb-1' style={{ color: 'black' }} >Clear Canvas</button>
+       <br />
+       <div width="600" height="360" id='drawCanvas'>
+
+       </div>
+    </div>
+  );
+}
+export default DrawMaze;
+
+import React, { useEffect, useState } from 'react';
+import Konva from 'konva';
+
+const DrawMaze = () => {
+  const [lineType, setLineType] = useState("Horizontal");
+  useEffect(() => {
+    const width = 570;
+    const height = 360;
+
+    const stage = new Konva.Stage({
+      container: 'container',
+      width: width,
+      height: height,
+    });
+
+    const layer = new Konva.Layer();
+    stage.add(layer);
+
+    const canvas = document.createElement('canvas');
+    canvas.width = stage.width();
+    canvas.height = stage.height();
+
+    const image = new Konva.Image({
+      image: canvas,
+      x: 0,
+      y: 0,
+    });
+    layer.add(image);
+
+    const context = canvas.getContext('2d');
+    context.strokeStyle = '#df4b26';
+    context.lineJoin = 'round';
+    context.lineWidth = 2;
+
+    let isPaint = false;
+    let lastPointerPosition;
+    let mode = {tool: 'brush', lineType: lineType};
+
+    image.on('mousedown touchstart', () => {
+      isPaint = true;
+      lastPointerPosition = stage.getPointerPosition();
+    });
+
+    stage.on('mouseup touchend', () => {
+      isPaint = false;
+    });
+
+    stage.on('mousemove touchmove', () => {
+      if (!isPaint) {
+        return;
+      }
+
+      if (mode.tool === 'brush') {
+        context.globalCompositeOperation = 'source-over';
+      }
+      if (mode.tool === 'eraser') {
+        context.globalCompositeOperation = 'destination-out';
+      }
+      context.beginPath();
+
+      const localPos = {
+        x: lastPointerPosition.x - image.x(),
+        y: lastPointerPosition.y - image.y(),
+      };
+      context.moveTo(localPos.x, localPos.y);
+      const pos = stage.getPointerPosition();
+      console.log(mode.lineType);
+      if(mode.lineType === 'Vertical'){
+        const updatedLocalPos = {
+          x: pos.x - image.x(),
+          y: pos.y - image.y(),
+        };        
+        context.lineTo(localPos.x, updatedLocalPos.y);
+        context.closePath();
+        context.stroke();
+      } else {
+        const updatedLocalPos = {
+          x: pos.x - image.x(),
+          y: pos.y - image.y(),
+        };        
+        context.lineTo(updatedLocalPos.x, localPos.y);
+        context.closePath();
+        context.stroke();
+      }
+
+      lastPointerPosition = pos;
+      layer.batchDraw();
+    });
+
+    const toolSelect = document.getElementById('tool');
+    toolSelect.addEventListener('change', () => {
+      mode.tool = toolSelect.value;
+      console.log(mode.tool);
+    });
+
+    const lineTypeSelect = document.getElementById('lineType');
+    lineTypeSelect.addEventListener('change', () => {
+      (lineTypeSelect.value === "Horizontal")? setLineType("Horizontal Line"): setLineType("Vertical Line");
+      mode.lineType = lineTypeSelect.value;
+    })
+
+    return () => {
+      // Cleanup event listeners or any resources on unmount
+      toolSelect.removeEventListener('change', () => {
+        mode.tool = toolSelect.value;
+        console.log(mode.tool);
+      });
+      lineTypeSelect.removeEventListener('change', () => {
+        (lineTypeSelect.value === "Horizontal")? setLineType("Horizontal Line"): setLineType("Vertical Line");
+        mode.lineType = lineTypeSelect.value;
+      })
+    };
+  }, [lineType]); // Empty dependency array ensures the effect runs only once on mount
+
+  return (
+    <div>
+      <div id='container'></div>
+      <select name="tool" id="tool">
+        <option value="brush">Brush</option>
+        <option value="eraser">Eraser</option>
+      </select>
+      <select name="lineType" id="lineType">
+        <option value="Horizontal">Horizontal Line</option>
+        <option value="Vertical">Vertical Line</option>
+      </select>
+    </div>
+  );
+};
+
+export default DrawMaze;
+
+import React, { useEffect, useState } from 'react';
+import Konva from 'konva';
+
+const DrawMaze = () => {
+  const [lineType, setLineType] = useState("Horizontal");
+  const [clearCanvasBool, setClearCanvasBool] = useState(false);
+  useEffect(() => {
+    const width = 570;
+    const height = 360;
+
+    const stage = new Konva.Stage({
+      container: 'container',
+      width: width,
+      height: height,
+    });
+
+    const layer = new Konva.Layer();
+    stage.add(layer);
+
+    const canvas = document.createElement('canvas');
+    canvas.width = stage.width();
+    canvas.height = stage.height();
+
+    const image = new Konva.Image({
+      image: canvas,
+      x: 0,
+      y: 0,
+    });
+    layer.add(image);
+
+    const context = canvas.getContext('2d');
+    context.strokeStyle = '#df4b26';
+    context.lineJoin = 'round';
+    context.lineWidth = 2;
+
+    let isPaint = false;
+    let lastPointerPosition;
+    let mode = {tool: 'brush', lineType: lineType};
+
+    image.on('mousedown touchstart', () => {
+      isPaint = true;
+      lastPointerPosition = stage.getPointerPosition();
+    });
+
+    stage.on('mouseup touchend', () => {
+      isPaint = false;
+    });
+
+    stage.on('mousemove touchmove', () => {
+      if (!isPaint) {
+        return;
+      }
+
+      if (mode.tool === 'brush') {
+        context.globalCompositeOperation = 'source-over';
+      }
+      if (mode.tool === 'eraser') {
+        context.globalCompositeOperation = 'destination-out';
+      }
+      context.beginPath();
+
+      const localPos = {
+        x: lastPointerPosition.x - image.x(),
+        y: lastPointerPosition.y - image.y(),
+      };
+      context.moveTo(localPos.x, localPos.y);
+      const pos = stage.getPointerPosition();
+      console.log(mode.lineType);
+      if(mode.lineType === 'Vertical'){
+        const updatedLocalPos = {
+          x: pos.x - image.x(),
+          y: pos.y - image.y(),
+        };        
+        context.lineTo(localPos.x, updatedLocalPos.y);
+        context.closePath();
+        context.stroke();
+      } else {
+        const updatedLocalPos = {
+          x: pos.x - image.x(),
+          y: pos.y - image.y(),
+        };        
+        context.lineTo(updatedLocalPos.x, localPos.y);
+        context.closePath();
+        context.stroke();
+      }
+
+      lastPointerPosition = pos;
+      layer.batchDraw();
+    });
+
+    const toolSelect = document.getElementById('tool');
+    toolSelect.addEventListener('change', () => {
+      mode.tool = toolSelect.value;
+      console.log(mode.tool);
+    });
+
+    const lineTypeSelect = document.getElementById('lineType');
+    lineTypeSelect.addEventListener('change', () => {
+      (lineTypeSelect.value === "Horizontal")? setLineType("Horizontal Line"): setLineType("Vertical Line");
+      mode.lineType = lineTypeSelect.value;
+    });
+
+    const clearDataBtn = document.getElementById('clearCanvas');
+    clearDataBtn.addEventListener('click', () => {
+      setClearCanvasBool(!clearCanvasBool);
+    });
+
+    return () => {
+      // Cleanup event listeners or any resources on unmount
+      toolSelect.removeEventListener('change', () => {
+        mode.tool = toolSelect.value;
+        console.log(mode.tool);
+      });
+      lineTypeSelect.removeEventListener('change', () => {
+        (lineTypeSelect.value === "Horizontal")? setLineType("Horizontal Line"): setLineType("Vertical Line");
+        mode.lineType = lineTypeSelect.value;
+      })
+    };
+  }, [lineType, clearCanvasBool]); // Empty dependency array ensures the effect runs only once on mount
+
+  return (
+    <div>
+      <div id='container'></div>
+      <select className='form-select form-select-sm mb-1' name="tool" id="tool">
+        <option value="brush">Brush</option>
+        <option value="eraser">Eraser</option>
+      </select>
+      <select className='form-select form-select-sm mb-1' name="lineType" id="lineType">
+        <option value="Horizontal">Horizontal Line</option>
+        <option value="Vertical">Vertical Line</option>
+      </select>
+      <button id='clearCanvas' className='btn btn-light btn-sm'>Clear Canvas</button>
+    </div>
+  );
+};
+
+export default DrawMaze;
+
+import './DrawMaze.css';
+import React, { useState, useRef, useEffect} from 'react';
+import p5 from 'p5';
+
+
+const DrawMaze = () => {
+  const clearBtnRef = useRef(null);
+  const canvasCreatedRef = useRef(false);
+  const myp5Ref = useRef(null);
+  const canvasId = useRef(null);
+
+  const [lineType, setLineType] = useState('horizontal');
+  const [lineWidth, setLineWidth] = useState(2);
+  const [lineHeight, setLineHeight] = useState(50);
+  const [runCount, setRunCount] = useState(0);
+
+  useEffect(() => {
+    const clearBtn = clearBtnRef.current;
+    const sketch1 = (p) => {
+      let localLineType = lineType;
+      p.setup = () => {
+        if(runCount === 0 && !canvasCreatedRef.current && !canvasId.current){
+          const canvas = p.createCanvas(570, 360);
+          canvas.parent('drawCanvas');
+          setRunCount((prevRunCount) => prevRunCount + 1 );
+          canvasCreatedRef.current = true;
+          canvasId.current = canvas.elt.id;
+          console.log(canvasId.current);
+          if(canvasId.current === "defaultCanvas0"){
+            myp5Ref.current = p5Obj;
+          }
+          canvas.mouseClicked(drw);
+          console.log(runCount);
+        } else {
+          console.log(runCount);
+        }
+      }
+
+      var drawing = false;
+      var vertical;
+      var count = 0;
+      var px, py, nx, ny;
+
+      const drw = () => {
+        vertical = (localLineType === 'vertical')? true: false;
+        console.log(vertical);
+        if (count === 0) {
+          px = p.mouseX;
+          py = p.mouseY;
+          drawing = false;
+        } else if (count === 1) {
+          nx = p.mouseX;
+          ny = p.mouseY;
+          drawing = true;
+        } else {
+          px = p.mouseX;
+          py = p.mouseY;
+          drawing = false;
+        }
+        count = (count + 1) % 3;
+        console.log(count);
+      }
+
+      p.draw = () => {
+        if (drawing && vertical) {
+          // Continue drawing horizontally
+          p.line(px, py, px, ny);
+        } else if (drawing && !vertical) {
+          // Continue drawing vertically
+          p.line(px, py, nx, py);
+        }
+      };
+
+      function clearFunc(event){
+        p.clear(1,0,0);
+      }
+
+      clearBtn.addEventListener('click', clearFunc);
+
+      return () => {
+        clearBtn.removeEventListener('click', clearFunc);
+      }
+    };
+
+    if(runCount === 0 && !canvasCreatedRef.current){
+      var p5Obj = new p5(sketch1);
+    }   
+  }, [runCount, lineType]);
+  
+
+  return(
+  <div>
+       <label>
+         Select line type:
+         <select value={lineType} onChange={(e) => setLineType(e.target.value)}>
+           <option value="horizontal">Horizontal</option>
+           <option value="vertical">Vertical</option>
+         </select>
+       </label>
+       <br />
+       <label>
+         Line Width:
+         <input type="number" value={lineWidth} onChange={(e) => setLineWidth(e.target.valueAsNumber)} min="1" />
+       </label>
+       <br />
+       <label>
+         Line Height:
+         <input type="number" value={lineHeight} onChange={(e) => setLineHeight(e.target.valueAsNumber)} min="1" />
+       </label>
+       <button ref={clearBtnRef} className='btn btn-sm bg-light mb-1' style={{ color: 'black' }} >Clear Canvas</button>
+       <br />
+       <div width="600" height="360" id='drawCanvas'>
+
+       </div>
+    </div>
+  );
+}
+export default DrawMaze;
+
+
+import React, { useEffect, useState, useRef } from 'react';
+import Konva from 'konva';
+
+const DrawMaze = () => {
+  const [lineType, setLineType]               = useState("Horizontal");
+  const [clearCanvasBool, setClearCanvasBool] = useState(false);
+  const [runCount, setRunCount]               = useState(0);
+
+  const stageRef    = useRef(null);
+  const layerRef    = useRef(null);
+  const contextRef  = useRef(null);
+  const imageRef    = useRef(null);
+
+  useEffect(() => {
+    function setup(){
+      setRunCount((prevRunCount) => prevRunCount + 1);
+      const width = 570;
+      const height = 360;
+
+      const stage = new Konva.Stage({
+        container: 'container',
+        width: width,
+        height: height,
+      });
+
+      const layer = new Konva.Layer();
+      stage.add(layer);
+
+      const canvas = document.createElement('canvas');
+      canvas.width = stage.width();
+      canvas.height = stage.height();
+
+      const image = new Konva.Image({
+        image: canvas,
+        x: 0,
+        y: 0,
+      });
+      layer.add(image);
+
+      const context = canvas.getContext('2d');
+      context.strokeStyle = '#df4b26';
+      context.lineJoin = 'round';
+      context.lineWidth = 2;
+
+      stageRef.current = stage;
+      contextRef.current = context;
+      imageRef.current = image;
+      layerRef.current = layer;
+    }
+
+    function mainDraw(stage, layer, context, image){
+      // let isPaint = false;
+      let lastPointerPosition;
+      let mode = {tool: 'brush', lineType: lineType};
+      let count = 0;
+  
+      // image.on('click tap', () => {
+      //   isPaint = !isPaint;
+      //   lastPointerPosition = stage.getPointerPosition();
+      //   count = (count + 1)%2;
+
+
+      // });
+  
+      stage.on('click tap', () => {
+        // isPaint = !isPaint;
+        count = (count + 1)%2;
+        var pos;
+        var startPos;
+        // if (!isPaint) {
+        //   return;
+        // }
+  
+        if (mode.tool === 'brush') {
+          context.globalCompositeOperation = 'source-over';
+        }
+        if (mode.tool === 'eraser') {
+          context.globalCompositeOperation = 'destination-out';
+        }
+        context.beginPath();
+
+        if(count === 0){
+          startPos = {
+            x: lastPointerPosition.x - image.x(),
+            y: lastPointerPosition.y - image.y(),
+          };
+          context.moveTo(startPos.x, startPos.y);
+          pos = stage.getPointerPosition();
+        } else if (count === 1){
+          if(mode.lineType === 'Vertical'){
+            const endPos = {
+              x: pos.x - image.x(),
+              y: pos.y - image.y(),
+            };        
+            context.lineTo(startPos.x, endPos.y);
+            context.closePath();
+            context.stroke();
+          } else {
+            const endPos = {
+              x: pos.x - image.x(),
+              y: pos.y - image.y(),
+            };        
+            context.lineTo(endPos.x, startPos.y);
+            context.closePath();
+            context.stroke();
+          }
+        }
+        lastPointerPosition = pos;
+        layer.batchDraw();
+      });
+
+      // stage.on('mousemove touchmove', () => {
+      //   if (!isPaint) {
+      //     return;
+      //   }
+  
+      //   if (mode.tool === 'brush') {
+      //     context.globalCompositeOperation = 'source-over';
+      //   }
+      //   if (mode.tool === 'eraser') {
+      //     context.globalCompositeOperation = 'destination-out';
+      //   }
+      //   context.beginPath();
+  
+      //   const localPos = {
+      //     x: lastPointerPosition.x - image.x(),
+      //     y: lastPointerPosition.y - image.y(),
+      //   };
+      //   context.moveTo(localPos.x, localPos.y);
+      //   const pos = stage.getPointerPosition();
+      //   // console.log(mode.lineType);
+      //   if(mode.lineType === 'Vertical'){
+      //     const updatedLocalPos = {
+      //       x: pos.x - image.x(),
+      //       y: pos.y - image.y(),
+      //     };        
+      //     context.lineTo(localPos.x, updatedLocalPos.y);
+      //     context.closePath();
+      //     context.stroke();
+      //   } else {
+      //     const updatedLocalPos = {
+      //       x: pos.x - image.x(),
+      //       y: pos.y - image.y(),
+      //     };        
+      //     context.lineTo(updatedLocalPos.x, localPos.y);
+      //     context.closePath();
+      //     context.stroke();
+      //   }
+  
+      //   lastPointerPosition = pos;
+      //   layer.batchDraw();
+      // });
+  
+      const toolSelect = document.getElementById('tool');
+      toolSelect.addEventListener('change', () => {
+        mode.tool = toolSelect.value;
+        console.log(mode.tool);
+      });
+  
+      const lineTypeSelect = document.getElementById('lineType');
+      lineTypeSelect.addEventListener('change', () => {
+        (lineTypeSelect.value === "Horizontal")? setLineType("Horizontal Line"): setLineType("Vertical Line");
+        mode.lineType = lineTypeSelect.value;
+      });
+  
+      const clearDataBtn = document.getElementById('clearCanvas');
+      clearDataBtn.addEventListener('click', () => {
+        setClearCanvasBool(!clearCanvasBool);
+        console.log(clearCanvasBool);
+      });
+
+      return () => {
+        // Cleanup event listeners or any resources on unmount
+        toolSelect.removeEventListener('change', () => {
+          mode.tool = toolSelect.value;
+          console.log(mode.tool);
+        });
+        lineTypeSelect.removeEventListener('change', () => {
+          (lineTypeSelect.value === "Horizontal")? setLineType("Horizontal Line"): setLineType("Vertical Line");
+          mode.lineType = lineTypeSelect.value;
+        })
+      };
+    }
+    
+    if(runCount === 0){
+      setup();
+      mainDraw(stageRef.current, layerRef.current, contextRef.current, imageRef.current);
+    } else {
+      mainDraw(stageRef.current, layerRef.current, contextRef.current, imageRef.current);
+    }
+
+  }, [lineType, clearCanvasBool, runCount]); // Empty dependency array ensures the effect runs only once on mount
+
+  return (
+    <div>
+      <div id='container'></div>
+      <select className='form-select form-select-sm mb-1' name="tool" id="tool">
+        <option value="brush">Brush</option>
+        <option value="eraser">Eraser</option>
+      </select>
+      <select className='form-select form-select-sm mb-1' name="lineType" id="lineType">
+        <option value="Horizontal">Horizontal Line</option>
+        <option value="Vertical">Vertical Line</option>
+      </select>
+      <button id='clearCanvas' className='btn btn-light btn-sm'>Clear Canvas</button>
+    </div>
+  );
+};
+
+export default DrawMaze;

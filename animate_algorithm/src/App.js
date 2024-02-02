@@ -32,10 +32,10 @@ import React, { useState, useEffect } from 'react';
 //   )
 // }
 
-const Home = () => (
+const Home = ({wallPositions, dataSent}) => (
   <>
     <div className="mazeSpace">
-      <Game/>
+      <Game wallPositions={wallPositions} dataSent={dataSent} />
     </div>
     <div className="codingSpace">
       <h1>This is code space</h1>
@@ -55,11 +55,12 @@ function App() {
   const [mode, setMode] = useState("Dark Mode");
   const [navStyle, setStyle] = useState({color : "white", backgroundColor : "black"}); /*for navbar*/
   const [bodyStyle, setBodyStyle] = useState({color : "black", backgroundColor : "white"}); /*for main body*/
+  const [wallPositionsFromDrawMaze, setWallPositionsFromDrawMaze] = useState([]);
+  const [dataSent, setDataSent] = useState(false);
 
   /*To switch theme when toggle button is clicked*/
   const switchtheme = () => {
     if (mode === "Dark Mode"){
-        console.log(mode);
         setMode("Light Mode");
         setStyle({
             color: "white",
@@ -70,7 +71,6 @@ function App() {
             backgroundColor : "black"
         });
     }else{
-        console.log(mode);
         setMode("Dark Mode");
         setStyle({
             backgroundColor : "black",
@@ -88,14 +88,19 @@ function App() {
     document.body.style.color = bodyStyle.color;
   }, [bodyStyle]);
 
+  const receivePositions = (data) => {
+    setWallPositionsFromDrawMaze(data);
+    setDataSent(true);
+  }
+
   return (
     <Router >
       <Navbar title="Maze Solving Game" text1 = "About" modec = {mode === 'Dark Mode'? 'Light Mode': 'Dark Mode'} switchfunc = {switchtheme} style = {navStyle} />
-      <div className="mainCont">
+      <div className="mainCont" style={navStyle}>
         <Routes>
-            <Route path="/" element={<Home/>} />
+            <Route path="/" element={<Home wallPositions={wallPositionsFromDrawMaze} dataSent={dataSent}/>} />
             <Route path = '/About' element = {<About/>} />
-            <Route path='/Draw-Maze' element={<DrawMaze/>} />
+            <Route path='/Draw-Maze' element={<DrawMaze sendDataToApp={receivePositions}/>} />
         </Routes>
       </div>
       <Footer style = {navStyle}/>

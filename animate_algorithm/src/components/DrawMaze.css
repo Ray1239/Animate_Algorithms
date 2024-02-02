@@ -1,3 +1,24 @@
 #drawCanvas{
     background-color: white;
 }
+
+#defaultCanvas0{
+    cursor: crosshair;
+}
+
+#lineType{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#myLineSlider{
+    width: 100px;
+}
+
+#canvasInputs{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+}
