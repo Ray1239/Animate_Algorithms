@@ -6,11 +6,19 @@ body{
   font-family: 'Times New Roman', Times, serif;
 }
 
-.mainCont{
-  position: fixed;
+.navSize{
+  width: 600px;
+  position: absolute;
   left: 50%;
   transform: translate(-50%);
-  top: 150px;
+  top: 78px;
+}
+
+.mainCont{
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
+  top: 120px;
   width: 600px;
   /* height: 50%; */
   /* background-color: gray; */
@@ -32,4 +40,23 @@ body{
   justify-content: center;
   text-align: center;
   font-family: 'Times New Roman', Times, serif;
+}
+
+.navIndex{
+  z-index: 100;
+}
+
+/* 
+.sideBar{
+  z-index: 10;
+  position: relative;
+} */
+
+@media screen and (max-width: 570px) {
+  .mainCont{
+    width: 100dvw;
+  }
+  .navSize{
+    width: 100dvw;
+  }
 }

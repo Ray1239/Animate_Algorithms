@@ -1,0 +1,153 @@
+.darkBg{
+    background-image: url("../../public/assets/Background/mesh-178.png");
+    /* background: linear-gradient(70deg, rgba(255, 254, 254, 1) 0%, rgba(30, 31, 33, 1) 0%, rgba(255, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 77%, rgba(0, 0, 0, 1) 100%); */
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.lightBg{
+    background-image: url("../../public/assets/Background/mesh-608.png");
+    /* background: linear-gradient(90deg, rgba(147, 147, 147, 1) 0%, rgba(0, 81, 212, 1) 24%, rgba(167, 46, 46, 1) 100%); */
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: white;
+}
+
+/* .introMain{
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: 1fr 1fr;
+    height: 40em;
+} */
+
+.intro-div{
+    position: absolute;
+    /* top: 15%; */
+    text-align: justify;
+    text-justify: inter-word;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    /* gap: 250px; */
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    grid-template-rows: 1fr 1fr;
+    height: 40em;
+}
+
+.slideShow{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-self: center;
+    position: relative;
+    grid-row: span 2;
+}
+
+.imagesCont{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+
+h3{
+    text-align: center;
+}
+
+.intro{
+    align-self: center;
+    grid-row: span 2;
+    margin: 20px;
+    margin-left: 30px;
+}
+
+.next,
+.prev {
+  position: absolute;
+  background-color: transparent;
+  border: 1px solid black;
+  border-radius: 20px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 18px;
+  z-index: 2;
+}
+
+.next {
+  right: calc(50% - 140px);
+  /* transform: translate(30%); */
+  color: black;
+}
+
+.prev {
+  left: calc(50% - 140px);
+  transform: scale(-1);
+  color: black;
+}
+
+.typed-container{
+    display: flex;
+    justify-content: center;
+}
+
+/* img {
+    position: relative;
+    left: 0px;
+    transform: translate(50%);
+    max-width: 100vw;
+} */
+/* 
+.refresh {
+    padding: 10px;
+    position: absolute;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 10px;
+    width: 20px;
+    height: 20px;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+} */
+
+@media screen and (max-width: 600px) {
+    .darkBg{
+        background-image: url("../../public/assets/Background/mesh-178-mobile.png");
+    }
+    .lightBg{
+        background-image: url("../../public/assets/Background/mesh-608-mobile.png");
+    }
+
+    .intro{
+        grid-column: span 2;
+        grid-row: span 1;
+    }
+
+    .slideShow{
+        grid-column: span 2;
+        grid-row: span 1;
+    }
+
+    .intro-div{
+        height: auto;
+    }
+}
+
+/* .intro-head{
+    position: absolute;
+    top: 50%;
+} */
+
+/* .intro-text{
+    position: absolute;
+    top: 150px;
+} */

@@ -2,7 +2,7 @@ import './DrawMaze.css';
 import React, { useState, useRef, useEffect} from 'react';
 import p5 from 'p5';
 
-const DrawMaze = ({sendDataToApp}) => {
+const DrawMaze = ({sendDataToApp, contStyle}) => {
   const clearBtnRef = useRef(null);
   const canvasCreatedRef = useRef(false);
   const myp5Ref = useRef(null);
@@ -17,16 +17,22 @@ const DrawMaze = ({sendDataToApp}) => {
   const verticalType = 1;
 
   useEffect(() => {
-    console.log(mazePositions);
+    const mazeReadyBtn = mazeReadyRef.current;
+    
     const sendData = () => {
       sendDataToApp(mazePositions);
     }
-    sendData();
+
+    mazeReadyBtn.addEventListener('click', sendData);
+
+    return() => {
+      mazeReadyBtn.removeEventListener('click', sendData);
+    }
   }, [mazePositions, sendDataToApp]);
 
   useEffect(() => {
     const clearBtn = clearBtnRef.current;
-    const mazeReadyBtn = mazeReadyRef.current;
+
     const sketch1 = (p) => {
       // console.log(lineSliderRef.current);
       p.setup = () => {
@@ -94,9 +100,9 @@ const DrawMaze = ({sendDataToApp}) => {
       //   console.log(mazePositions);
       // }
 
-      const sendData = () => {
-        sendDataToApp(mazePositions);
-      }
+      // const sendData = () => {
+      //   sendDataToApp(mazePositions);
+      // }
 
       const pushPositions = (x, y, width, height, type) => {
         setMazePositions((prevPositions) => [
@@ -106,11 +112,9 @@ const DrawMaze = ({sendDataToApp}) => {
       };
 
       clearBtn.addEventListener('click', clearFunc);
-      mazeReadyBtn.addEventListener('click', sendData);
 
       return () => {
         clearBtn.removeEventListener('click', clearFunc);
-        mazeReadyBtn.removeEventListener('click', sendData);
       }
     };
 
@@ -121,7 +125,7 @@ const DrawMaze = ({sendDataToApp}) => {
   
 
   return(
-    <div>
+    <div className='mainCont' style={contStyle}>
       <div id='canvasInputs'>
         <label htmlFor="myLineSlider">Horizontal</label>
         <div id='lineType'>

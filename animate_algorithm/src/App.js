@@ -1,62 +1,50 @@
 // import logo from './logo.svg';
 import './App.css';
-// import Maze from './components/Maze';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import Game from './components/Game';
+import Maze from './components/Maze';
 import DrawMaze from './components/DrawMaze';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import About from './components/About';
+import Home from './components/Home';
+
+import { Nav } from 'react-bootstrap';
+import { Route, Routes, Link, useLocation } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
-// import { Canvas, useFrame } from '@react-three/fiber';
 
-// function Box(props) {
-//   // This reference will give us direct access to the mesh
-//   const meshRef = useRef();
-//   // Set up state for the hovered and active state
-//   const [hovered, setHover] = useState(false);
-//   const [active, setActive] = useState(false);
-//   // Subscribe this component to the render-loop, rotate the mesh every frame
-//   useFrame((state, delta) => (meshRef.current.rotation.x += delta));
-//   // Return view, these are regular three.js elements expressed in JSX
-//   return (
-//     <mesh
-//       {...props}
-//       ref={meshRef}
-//       scale={active ? 1.5 : 1}
-//       onClick={(event) => setActive(!active)}
-//       onPointerOver={(event) => setHover(true)}
-//       onPointerOut={(event) => setHover(false)}>
-//       <planeBufferGeometry attach="geometry" args={[25, 15]} />
-//       <meshPhongMaterial attach="material" color={hovered? "green": "pink"} />
-//     </mesh>
-//   )
-// }
+const MazeNavigation = () => (
+  <Nav variant="tabs" defaultActiveKey="/Algorithms/Maze-Solving" className='navSize'>
+    <Nav.Item>
+      <Nav.Link as={Link} to="/Algorithms/Maze-Solving" eventKey="/Algorithms/Maze-Solving">
+        Solve Maze
+      </Nav.Link>
+    </Nav.Item>
+    <Nav.Item>
+      <Nav.Link as={Link} to="/Algorithms/Draw-Maze" eventKey="/Algorithms/Draw-Maze">
+        Create New Maze
+      </Nav.Link>
+    </Nav.Item>
+  </Nav>
+)
 
-const Home = ({wallPositions, dataSent}) => (
-  <>
+const Backtracking = ({ wallPositions, dataSent, contStyle}) => (
+  <div className='mainCont' style={contStyle}>
     <div className="mazeSpace">
-      <Game wallPositions={wallPositions} dataSent={dataSent} />
+      <Maze wallPositions={wallPositions} dataSent={dataSent} />
     </div>
     <div className="codingSpace">
       <h1>This is code space</h1>
     </div>
-  </>
+  </div>
 );
-
-const About = () => (
-  <>
-    <div className="about">
-      <h1>This is about page</h1>
-    </div>
-  </>
-)
 
 function App() {
   const [mode, setMode] = useState("Dark Mode");
   const [navStyle, setStyle] = useState({color : "white", backgroundColor : "black"}); /*for navbar*/
   const [bodyStyle, setBodyStyle] = useState({color : "black", backgroundColor : "white"}); /*for main body*/
+  const [homeThemeSVG, setHomeThemeSVG] = useState(0);
   const [wallPositionsFromDrawMaze, setWallPositionsFromDrawMaze] = useState([]);
   const [dataSent, setDataSent] = useState(false);
+  const location = useLocation();
 
   /*To switch theme when toggle button is clicked*/
   const switchtheme = () => {
@@ -70,6 +58,7 @@ function App() {
             color : "white",
             backgroundColor : "black"
         });
+        setHomeThemeSVG(1);
     }else{
         setMode("Dark Mode");
         setStyle({
@@ -80,6 +69,7 @@ function App() {
           color : "black",
           backgroundColor : "white"
         });
+        setHomeThemeSVG(0);
     }
   };
 
@@ -94,17 +84,20 @@ function App() {
   }
 
   return (
-    <Router >
-      <Navbar title="Maze Solving Game" text1 = "About" modec = {mode === 'Dark Mode'? 'Light Mode': 'Dark Mode'} switchfunc = {switchtheme} style = {navStyle} />
-      <div className="mainCont" style={navStyle}>
-        <Routes>
-            <Route path="/" element={<Home wallPositions={wallPositionsFromDrawMaze} dataSent={dataSent}/>} />
-            <Route path = '/About' element = {<About/>} />
-            <Route path='/Draw-Maze' element={<DrawMaze sendDataToApp={receivePositions}/>} />
-        </Routes>
-      </div>
+    <>
+      <Navbar className="navIndex" title="Algomerse" text1 = "Draw Maze" url1 = "/Draw-Maze" modec = {mode === 'Dark Mode'? 'Light Mode': 'Dark Mode'} switchfunc = {switchtheme} style = {navStyle} />
+        {location.pathname.startsWith('/Algorithms') && <MazeNavigation/>}
+
+          <Routes>
+              <Route path="/" element={<Home theme={homeThemeSVG}/>} />
+              <Route path = '/About' element = {<About contStyle={navStyle}/>} />
+              <Route path = '/Menu' element = {<About contStyle={navStyle}/>} />
+              <Route path="/Algorithms/Maze-Solving" element={<Backtracking contStyle={navStyle} wallPositions={wallPositionsFromDrawMaze} dataSent={dataSent} />} />
+              <Route path="/Algorithms/Draw-Maze" element={<DrawMaze contStyle={navStyle} sendDataToApp={receivePositions} />} />
+          </Routes>
+
       <Footer style = {navStyle}/>
-    </Router>
+    </>
   );
 }
 
