@@ -2,40 +2,18 @@
 import './App.css';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import Maze from './components/Maze';
-import DrawMaze from './components/DrawMaze';
+// import DrawMaze from './components/DrawMaze';
 import About from './components/About';
 import Home from './components/Home';
-
-import { Nav } from 'react-bootstrap';
-import { Route, Routes, Link, useLocation } from 'react-router-dom';
+import Menu from './components/Menu';
+import BackTracking from './components/BackTracking';
+import SearchAnimation from './components/SearchingAlgorithm';
+import LinePlot from './components/LinePlot';
+// import { Nav } from 'react-bootstrap';
+import { Route, Routes, useLocation} from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 
-const MazeNavigation = () => (
-  <Nav variant="tabs" defaultActiveKey="/Algorithms/Maze-Solving" className='navSize'>
-    <Nav.Item>
-      <Nav.Link as={Link} to="/Algorithms/Maze-Solving" eventKey="/Algorithms/Maze-Solving">
-        Solve Maze
-      </Nav.Link>
-    </Nav.Item>
-    <Nav.Item>
-      <Nav.Link as={Link} to="/Algorithms/Draw-Maze" eventKey="/Algorithms/Draw-Maze">
-        Create New Maze
-      </Nav.Link>
-    </Nav.Item>
-  </Nav>
-)
-
-const Backtracking = ({ wallPositions, dataSent, contStyle}) => (
-  <div className='mainCont' style={contStyle}>
-    <div className="mazeSpace">
-      <Maze wallPositions={wallPositions} dataSent={dataSent} />
-    </div>
-    <div className="codingSpace">
-      <h1>This is code space</h1>
-    </div>
-  </div>
-);
+const title = "Algomerse";
 
 function App() {
   const [mode, setMode] = useState("Dark Mode");
@@ -83,18 +61,20 @@ function App() {
     setDataSent(true);
   }
 
+  const data = [1, 2, 3, 4, 5]; // Example data
+
   return (
     <>
       <Navbar className="navIndex" title="Algomerse" text1 = "Draw Maze" url1 = "/Draw-Maze" modec = {mode === 'Dark Mode'? 'Light Mode': 'Dark Mode'} switchfunc = {switchtheme} style = {navStyle} />
-        {location.pathname.startsWith('/Algorithms') && <MazeNavigation/>}
-
           <Routes>
-              <Route path="/" element={<Home theme={homeThemeSVG}/>} />
+              <Route path="/" element={<Home title={title} theme={homeThemeSVG}/>} />
               <Route path = '/About' element = {<About contStyle={navStyle}/>} />
-              <Route path = '/Menu' element = {<About contStyle={navStyle}/>} />
-              <Route path="/Algorithms/Maze-Solving" element={<Backtracking contStyle={navStyle} wallPositions={wallPositionsFromDrawMaze} dataSent={dataSent} />} />
-              <Route path="/Algorithms/Draw-Maze" element={<DrawMaze contStyle={navStyle} sendDataToApp={receivePositions} />} />
+              <Route path = '/Menu' element = {<Menu title={title} contStyle={navStyle}/>} />
+              <Route path='/Algorithms/Searching' element = {<SearchAnimation id="Chart"/>}></Route>
+              <Route path='/Algorithms/LineChart' element = {<LinePlot data={data}/>}></Route>
+              <Route path = '/Algorithms/BackTracking/*' element={<BackTracking contStyle={navStyle} wallPositions={wallPositionsFromDrawMaze} dataSent={dataSent} sendDataToApp={receivePositions} />}></Route>
           </Routes>
+          {location.pathname.startsWith('/Algorithms/BackTracking/') && <BackTracking contStyle={navStyle} wallPositions={wallPositionsFromDrawMaze} dataSent={dataSent} sendDataToApp={receivePositions} />}
 
       <Footer style = {navStyle}/>
     </>

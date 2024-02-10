@@ -1,0 +1,26 @@
+.mazeSpace{
+    grid-column: span 1;
+    grid-row: span 2;
+}
+
+.codingSpace{
+    grid-column: span 1;
+    grid-row: span 2;
+    justify-content: center;
+    text-align: center;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+/* .navSize{
+    width: 600px;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%);
+    top: 78px;
+}
+
+@media screen and (max-width: 570px) {
+    .navSize{
+        width: 100dvw;
+    }
+} */

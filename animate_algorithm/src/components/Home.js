@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { wrap } from "framer-motion";
 import ReactTyped from "react-typed";
+import { useNavigate } from "react-router-dom";
 import './Home.css';
 
 const images = [
@@ -59,10 +60,11 @@ const swipePower = (offset, velocity) => {
   return Math.abs(offset) * velocity;
 };
 
-const Home = ({ theme }) => {
+const Home = ({ theme, title }) => {
   const [bg, setBg] = useState("lightBg");
   const [[page, direction], setPage] = useState([0, 0]);
   const typedRef = useRef(null);
+  const navigate = useNavigate();
   
   const imageIndex = wrap(0, images.length, page);
   const paginate = (newDirection) => {
@@ -90,6 +92,10 @@ const Home = ({ theme }) => {
 
   }, [page]); // Trigger the effect whenever the page changes
 
+  const goToMenu = () => {
+    navigate('/Menu');
+  }
+
   // const handleTypingPaused = () => {
   //   typedRef.current.strings = [titles[imageIndex]]; // Change the strings to be typed based on the current slide title
   //   typedRef.current.start(); // Restart the typing animation
@@ -115,11 +121,12 @@ const Home = ({ theme }) => {
     <>
       <div className={bg + " intro-div"}>
         <div className="intro">
-          <h1>Algomerse</h1>
+          <h1>{title}</h1>
           <p>            
             Dive into the world of algorithms with our interactive platform designed to educate and inspire.
             Start your journey today and unlock the secrets of computer science!
           </p>
+          <button type="button" className={"btn " + (bg === "lightBg"?  "btn-outline-light":" btn-outline-primary")} onClick={goToMenu}>Explore Now</button>
         </div>
         <div className="slideShow">
           <div className="imagesCont">
@@ -136,8 +143,10 @@ const Home = ({ theme }) => {
                 animate="center"
                 exit="exit"
                 transition={{
-                  x: { type: "spring", stiffness: 100, damping: 25 },
+                  // x: { type: "spring", stiffness: 100, damping: 20 },
+                  ease: "linear",
                   opacity: { duration: 0.2 },
+                  mass: 5,
                 }}
                 drag="x"
                 dragConstraints={{ left: 0, right: 0 }}

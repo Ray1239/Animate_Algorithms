@@ -28,7 +28,7 @@ body{
   padding: 15px;
 }
 
-.mazeSpace{
+/* .mazeSpace{
   grid-column: span 1;
   grid-row: span 2;
 
@@ -40,7 +40,7 @@ body{
   justify-content: center;
   text-align: center;
   font-family: 'Times New Roman', Times, serif;
-}
+} */
 
 .navIndex{
   z-index: 100;

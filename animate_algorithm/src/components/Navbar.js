@@ -1,17 +1,38 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { Outlet, Link } from "react-router-dom";
 import PropTypes from 'prop-types';
 
 export default function Navbar(props){
     const [activeLink, setActiveLink] = useState('Home');
+    const [isMobile, setIsMobile] = useState(false);
+    const [menuExpanded, setMenuExpanded] = useState(false);
 
     const handleLinkClick = (link) => {
-      setActiveLink(link);
+        setActiveLink(link);
     };
+
+    const handleMenuToggle = () => {
+        setMenuExpanded(!menuExpanded);
+    }
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 600); // Set isMobile state based on screen width
+        };
+
+        // Add event listener for window resize
+        window.addEventListener('resize', handleResize);
+
+        // Initial check for mobile screen
+        handleResize();
+
+        // Clean up the event listener
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
     return(
         <nav className="navbar navbar-expand-lg navbar-dark" style={{ ...props.style, zIndex: 1000}}>
             <div className="container-fluid">
-                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded={menuExpanded} aria-label="Toggle navigation" onClick={handleMenuToggle} >
                     <span className="navbar-toggler-icon"></span>
                 </button>
                 <Link className="navbar-brand" to = '/'>{props.title}</Link>
@@ -45,7 +66,9 @@ export default function Navbar(props){
                     </ul>
                 </div>
                 <div className="form-check form-switch">
-                    <label className="form-check-label" htmlFor="flexSwitchCheckDisabled" style={{color: 'white'}}>{props.modec}</label>
+                    {(!isMobile || menuExpanded) && (
+                        <label className="form-check-label" htmlFor="flexSwitchCheckDisabled" style={{color: 'white'}}>{props.modec}</label>
+                    )}
                     <input className="form-check-input" type="checkbox" onChange={props.switchfunc} id="flexSwitchCheckDisabled"/>
                 </div>
             </div>
