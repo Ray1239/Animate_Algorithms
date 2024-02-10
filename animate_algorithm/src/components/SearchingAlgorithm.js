@@ -7,8 +7,9 @@ class SearchAnimation extends Component {
         super(props);
         this.state = {
             chartDrawn: false,
-            currIteratorVal: 0,
-            prevSearchIteratorVal: null
+            currIteratorVal: null,
+            prevSearchIteratorVal: null,
+            indices: []
         };
     }
 
@@ -24,8 +25,8 @@ class SearchAnimation extends Component {
     }
 
     componentDidUpdate(prevProps, prevState){
-        if(prevState.currIteratorVal !== this.state.currIteratorVal){
-            this.setState({ prevSearchIteratorVal: prevState.currIteratorVal })
+        if((prevState.currIteratorVal !== this.state.currIteratorVal)){
+            this.setState({ prevSearchIteratorVal: prevState.currIteratorVal });
         }
     }
 
@@ -125,13 +126,14 @@ class SearchAnimation extends Component {
 
         while (l <= r){
             let m = l + Math.floor((r - l)/2);
-            this.setState({currIteratorVal: m});
+            // this.setState({currIteratorVal: m});
             
             svg.select("#r" + m).attr("fill", "red");
+            this.state.indices.push(m);
+            const len = this.state.indices.length;
 
-            let firstElem = (this.state.prevSearchIteratorVal === null);
-            if(!firstElem){
-                svg.select("#r" + (this.state.prevSearchIteratorVal)).attr("fill", "blue");
+            if(len > 1){
+                svg.select("#r" + (this.state.indices[len - 2])).attr("fill", "blue");
             }
 
             await this.sleep(3000);
