@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import AlertDismissible from './AlertDismissable';
 import * as d3 from 'd3';
 
 class SearchAnimation extends Component {
@@ -7,9 +8,12 @@ class SearchAnimation extends Component {
         super(props);
         this.state = {
             chartDrawn: false,
-            currIteratorVal: null,
-            prevSearchIteratorVal: null,
-            indices: []
+            // currIteratorVal: null,
+            // prevSearchIteratorVal: null,
+            indices: [],
+            error: false,
+            alertHeading: "Element Not Found!",
+            alertText: "The element you are trying to find is not found in the data."
         };
     }
 
@@ -24,11 +28,11 @@ class SearchAnimation extends Component {
         }
     }
 
-    componentDidUpdate(prevProps, prevState){
-        if((prevState.currIteratorVal !== this.state.currIteratorVal)){
-            this.setState({ prevSearchIteratorVal: prevState.currIteratorVal });
-        }
-    }
+    // componentDidUpdate(prevProps, prevState){
+    //     if((prevState.currIteratorVal !== this.state.currIteratorVal)){
+    //         this.setState({ prevSearchIteratorVal: prevState.currIteratorVal });
+    //     }
+    // }
 
     componentWillUnmount() {
         window.removeEventListener("resize", this.ifWindowResize);
@@ -100,9 +104,9 @@ class SearchAnimation extends Component {
         return new Promise(resolve => setTimeout(resolve, ms));
     };
 
-    async linearSearch(arr, l, r, key, svg){
-
-        for (var i = l; i < r; i++){
+    async linearSearch(arr, l, r, key){
+        const svg = d3.select("#" + this.props.id).select("svg");
+        for (var i = l; i <= r; i++){
             svg.select("#r" + i).attr("fill", "red");
 
             let firstElem = (i === 0);
@@ -122,21 +126,29 @@ class SearchAnimation extends Component {
         return -1;
     }
 
-    async binarySearch(arr, l, r, key, svg){
-
+    async binarySearch(arr, l, r, key){
+        const svg = d3.select("#" + this.props.id).select("svg");
         while (l <= r){
             let m = l + Math.floor((r - l)/2);
             // this.setState({currIteratorVal: m});
             
             svg.select("#r" + m).attr("fill", "red");
-            this.state.indices.push(m);
-            const len = this.state.indices.length;
+            // this.state.indices.push(m);
+            // const len = this.state.indices.length;
+            this.setState(prevState => ({
+                indices: [...prevState.indices, m]
+            }), () => {
+                const len = this.state.indices.length;
+                if(len > 1){
+                    svg.select("#r" + (this.state.indices[len - 2])).attr("fill", "blue");
+                }
+            });
 
-            if(len > 1){
-                svg.select("#r" + (this.state.indices[len - 2])).attr("fill", "blue");
-            }
+            // if(len > 1){
+            //     svg.select("#r" + (this.state.indices[len - 2])).attr("fill", "blue");
+            // }
 
-            await this.sleep(3000);
+            await this.sleep(1000);
             
             if (arr[m] === key){
                 console.log("Element found at index: " + m);
@@ -150,6 +162,7 @@ class SearchAnimation extends Component {
             }
         }
         console.log("Element not found!");
+        this.setState({error: true});
         return -1;
     }
 
@@ -171,7 +184,7 @@ class SearchAnimation extends Component {
             // const svgWidth = 570;
             // const offset = 10;
 
-            const data = [20, 5, 6, 6, 9, 10, 12, 23, 23];
+            const data = this.props.data;
 
             this.mergeSort(data, 0, data.length - 1); 
 
@@ -200,15 +213,23 @@ class SearchAnimation extends Component {
 
             // this.linearSearch(data, 0, data.length - 1, 10, svg);
         
-            this.binarySearch(data, 0, data.length - 1, 9, svg);
+            // this.binarySearch(data, 0, data.length - 1, 11);
         }
     }
 
     render() {
         return (
-            <div className="mainCont container">
-                <div id={this.props.id}></div>
-            </div>
+            <>
+                <AlertDismissible show={this.state.error} heading={this.state.alertHeading} text={this.state.alertText}/>
+                <div className="mainCont container">
+                    <div id={this.props.id}></div>
+                    {/* <button className="btn btn-sm btn-primary col-1">Play</button> */}
+                    <div className="codeEditor">
+                        <button className="btn btn-sm btn-primary mt-2" onClick={() => {this.binarySearch(this.props.data, 0, this.props.data.length - 1, 1)}}>Play Animation</button>
+                        <button className="btn btn-sm btn-primary mt-2" onClick={() => {this.linearSearch(this.props.data, 0, this.props.data.length - 1, 37)}}>Play Linear Search Animation</button>
+                    </div>
+                </div>
+            </>
         )
     }
 }

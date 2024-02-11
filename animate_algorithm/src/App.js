@@ -61,7 +61,7 @@ function App() {
     setDataSent(true);
   }
 
-  const data = [1, 2, 3, 4, 5]; // Example data
+  const data = [20, 35, 10, 16, 36, 37, 40]; // Example data
 
   return (
     <>
@@ -70,7 +70,7 @@ function App() {
               <Route path="/" element={<Home title={title} theme={homeThemeSVG}/>} />
               <Route path = '/About' element = {<About contStyle={navStyle}/>} />
               <Route path = '/Menu' element = {<Menu title={title} contStyle={navStyle}/>} />
-              <Route path='/Algorithms/Searching' element = {<SearchAnimation id="Chart"/>}></Route>
+              <Route path='/Algorithms/Searching' element = {<SearchAnimation id="Chart" data={data}/>}></Route>
               <Route path='/Algorithms/LineChart' element = {<LinePlot data={data}/>}></Route>
               <Route path = '/Algorithms/BackTracking/*' element={<BackTracking contStyle={navStyle} wallPositions={wallPositionsFromDrawMaze} dataSent={dataSent} sendDataToApp={receivePositions} />}></Route>
           </Routes>
